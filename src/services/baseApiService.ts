@@ -7,9 +7,10 @@ import axios, {
   Method,
 } from "axios";
 import { ApiError, ApiResponse } from "../types/baseApiTypes";
+import authService from "./authService";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  import.meta.env.VITE_API_BASE_URL || "https://localhost:7204";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: `${API_BASE_URL}/api`,
@@ -20,8 +21,8 @@ const apiClient: AxiosInstance = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("authToken");
+  async (config: InternalAxiosRequestConfig) => {
+    const token = await authService.getAccessToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,8 +45,8 @@ apiClient.interceptors.response.use(
         : "UI_Error_UnexpectedError";
 
     if (status === 401) {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("refreshToken");
+      // TODO: implement navigation to login page
+      authService.removeTokens();
     }
 
     const apiError: ApiError = {

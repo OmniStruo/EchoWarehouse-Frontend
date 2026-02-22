@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { AppConfigDTO } from "../dtos/app/dtos";
 import { useAppApi } from "../hooks/useAppApi";
+import authService from "../services/authService";
+import { useAuthApi } from "../hooks/useAuthApi";
 
 export interface AppContextType {
   appConfig: AppConfigDTO | null;
@@ -11,6 +13,7 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { getBootstrapData } = useAppApi();
+  const authApi = useAuthApi();
   const [appConfig, setAppConfig] = useState<AppConfigDTO | null>(null);
 
   useEffect(() => {
@@ -18,7 +21,41 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const init = async () => {
-    await initData();
+    const accessToken = await authService.getAccessToken();
+
+    if (!accessToken) {
+      // navigate to login page, no token found
+      // TODO: implement navigation to login page
+    } else {
+      // validate token
+      const accessTokenResponse = await authApi.validate(accessToken);
+
+      if (accessTokenResponse.isOk) {
+        // token is valid, fetch bootstrap data
+        initData();
+      } else {
+        // try to refresh token
+        const refreshToken = await authService.getRefreshToken();
+        if (refreshToken) {
+          // refresh token found, try to refresh access token
+          const refreshTokenResponse = await authApi.refresh({ refreshToken });
+          if (refreshTokenResponse.isOk && refreshTokenResponse.data) {
+            // token refreshed successfully, save new tokens and fetch bootstrap data
+
+            const newRefreshToken = refreshTokenResponse.data
+              .refreshToken as string;
+            const newAccessToken = refreshTokenResponse.data
+              .accessToken as string;
+
+            authService.saveTokens(newRefreshToken, newAccessToken);
+            initData();
+          } else {
+            // refresh token is invalid, navigate to login page
+            // TODO: implement navigation to login page
+          }
+        }
+      }
+    }
   };
 
   const initData = async () => {
@@ -30,7 +67,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     } else {
       console.error("Failed to fetch bootstrap data:", response.message);
     }
-  }
+  };
 
   return (
     <AppContext.Provider
