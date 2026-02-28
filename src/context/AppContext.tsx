@@ -3,6 +3,8 @@ import { AppConfigDTO } from "../dtos/app/dtos";
 import { useAppApi } from "../hooks/useAppApi";
 import authService from "../services/authService";
 import { useAuthApi } from "../hooks/useAuthApi";
+import ROUTES from "../navigation/routes";
+import { useNavigate } from "react-router-dom";
 
 export interface AppContextType {
   appConfig: AppConfigDTO | null;
@@ -14,18 +16,24 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { getBootstrapData } = useAppApi();
   const authApi = useAuthApi();
+  const navigate = useNavigate();
+
   const [appConfig, setAppConfig] = useState<AppConfigDTO | null>(null);
 
   useEffect(() => {
     init();
   }, []);
 
+  const navigateToLogin = () => {
+    navigate(ROUTES.LOGIN, { replace: true });
+  };
+
   const init = async () => {
     const accessToken = await authService.getAccessToken();
 
     if (!accessToken) {
       // navigate to login page, no token found
-      // TODO: implement navigation to login page
+      navigateToLogin();
     } else {
       // validate token
       const accessTokenResponse = await authApi.validate(accessToken);
@@ -51,8 +59,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             initData();
           } else {
             // refresh token is invalid, navigate to login page
-            // TODO: implement navigation to login page
+            navigateToLogin();
           }
+        } else {
+          // no refresh token found, navigate to login page
+          navigateToLogin();
         }
       }
     }
