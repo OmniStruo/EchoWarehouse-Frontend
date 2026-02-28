@@ -1,18 +1,18 @@
-import { useState } from "react";
 import { LoginProvider } from "./context/LoginContext";
 import { useLoginContext } from "./hooks/useLoginContext";
 import AppInput from "../../common/components/AppInput";
 import AppButton from "../../common/components/AppButton";
 import AppLogo from "../../common/components/AppLogo";
 import AppCard from "../../common/components/AppCard";
+import AppIcon from "../../common/components/AppIcon";
+import { BsArrowRight } from "react-icons/bs";
+import { LoginRequestDTO } from "../../dtos/auth/dtos";
 
 export const Login = () => {
-  const loginContext = useLoginContext();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const { login, loginInfo, onChangeLoginInfo } = useLoginContext();
 
   const onSignInPress = () => {
-    loginContext.login(username, password);
+    login();
   };
 
   return (
@@ -49,8 +49,10 @@ export const Login = () => {
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Username"}
               </label>
-              <AppInput
-                onChange={(e) => setUsername(e.target.value)}
+              <AppInput<LoginRequestDTO>
+                obj={loginInfo}
+                propName={"username"}
+                onChange={(e) => onChangeLoginInfo("username", e.target.value)}
                 type="text"
                 placeholder={"UI_Login_EnterYourUsername"}
               />
@@ -61,18 +63,20 @@ export const Login = () => {
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Password"}
               </label>
-              <AppInput
+              <AppInput<LoginRequestDTO>
+                obj={loginInfo}
+                propName={"password"}
                 isPassword
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => onChangeLoginInfo("password", e.target.value)}
                 placeholder={"UI_Login_EnterYourPassword"}
                 className="pr-11"
               />
             </div>
 
             {/* Submit */}
-            <AppButton onClick={onSignInPress}>
+            <AppButton showLoading onClick={onSignInPress}>
               {"UI_Login_SignIn"}
-              <p>arrow right icon todo</p>
+              <AppIcon icon={BsArrowRight}  className="ml-2" />
             </AppButton>
           </div>
         </AppCard>
