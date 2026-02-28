@@ -1,9 +1,95 @@
+import { useState } from "react";
+import { LoginProvider } from "./context/LoginContext";
+import { useLoginContext } from "./hooks/useLoginContext";
+import AppInput from "../../common/components/AppInput";
+import AppButton from "../../common/components/AppButton";
+import AppLogo from "../../common/components/AppLogo";
+import AppCard from "../../common/components/AppCard";
+
 export const Login = () => {
+  const loginContext = useLoginContext();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onSignInPress = () => {
+    loginContext.login(username, password);
+  };
+
   return (
-    <div>
-      <p>Login</p>
+    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-glow" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
+
+      <div className="relative z-10 w-full max-w-md mx-4 animate-slide-up">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 rounded-2xl bg-primary mx-auto flex items-center justify-center shadow-glow mb-4 p-1">
+            <AppLogo className="text-primary-foreground" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight">EchoWarehouse</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Smart Warehouse Management System
+          </p>
+        </div>
+
+        {/* Login Card */}
+        <AppCard>
+          <h2 className="text-lg font-semibold mb-1">
+            {"UI_Login_WelcomeBack"}
+          </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            {"UI_Login_SignInToContinue"}
+          </p>
+
+          <div className="space-y-4">
+            {/* Username */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                {"UI_Login_Username"}
+              </label>
+              <AppInput
+                onChange={(e) => setUsername(e.target.value)}
+                type="text"
+                placeholder={"UI_Login_EnterYourUsername"}
+              />
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                {"UI_Login_Password"}
+              </label>
+              <AppInput
+                isPassword
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={"UI_Login_EnterYourPassword"}
+                className="pr-11"
+              />
+            </div>
+
+            {/* Submit */}
+            <AppButton onClick={onSignInPress}>
+              {"UI_Login_SignIn"}
+              <p>arrow right icon todo</p>
+            </AppButton>
+          </div>
+        </AppCard>
+
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          © {new Date().getFullYear()} EchoWarehouse - Smart Warehouse
+          Management System
+        </p>
+      </div>
     </div>
   );
 };
 
-export default Login;
+const LoginContextWrapper = () => (
+  <LoginProvider>
+    <Login />
+  </LoginProvider>
+);
+
+export default LoginContextWrapper;
