@@ -11,12 +11,15 @@ const AppValidator: React.FC<AppValidatorProps> = ({ validator, propName }) => {
     (error) => !propName || error.key === propName,
   );
 
-  if (!filteredErrors || filteredErrors.length === 0) {
-    return null;
-  }
+  const hasErrors = filteredErrors && filteredErrors.length > 0;
+
   return (
-    <div>
-      {filteredErrors.map((error) => (
+    <div
+      className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${
+        hasErrors ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+      }`}
+    >
+      {filteredErrors?.map((error) => (
         <p key={error.key} className="text-red-500 text-sm mt-1">
           {error.message}
         </p>
@@ -29,16 +32,10 @@ const areEqual = (
   prev: AppValidatorProps,
   next: AppValidatorProps
 ): boolean => {
-  // If propName changed, re-render
   if (prev.propName !== next.propName) return false;
-
-  // Compare validator arrays by content
   const prevLen = prev.validator?.length ?? 0;
   const nextLen = next.validator?.length ?? 0;
-
   if (prevLen !== nextLen) return false;
-
-  // Check each error's content
   for (let i = 0; i < prevLen; i++) {
     const prevErr = prev.validator![i];
     const nextErr = next.validator![i];
@@ -46,7 +43,6 @@ const areEqual = (
       return false;
     }
   }
-
   return true;
 };
 

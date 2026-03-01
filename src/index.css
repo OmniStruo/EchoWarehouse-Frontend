@@ -91,7 +91,7 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
+  
   .bg-gradient-card {
     background: var(--gradient-card);
   }
@@ -116,7 +116,7 @@
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
-  .animate-slide-up {
+   .animate-slide-up {
     animation: slide-up 0.5s ease-out;
   }
 

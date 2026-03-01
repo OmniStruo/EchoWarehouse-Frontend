@@ -16,6 +16,7 @@ export const LoginContext = createContext<LoginContextType | undefined>(
 );
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
+   console.log("LoginProvider RENDER"); // ← add this
   const { login: apiLogin, loading } = useLoginApi();
 
   const [loginInfo, setLoginInfo] = useState<LoginRequestDTO>(

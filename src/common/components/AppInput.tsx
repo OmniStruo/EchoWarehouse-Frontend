@@ -20,7 +20,6 @@ const AppInputComponent = ({
 }: AppInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  // Use validator directly — no need to duplicate into local state
   const hasError =
     validator &&
     validator.length > 0 &&
@@ -35,28 +34,27 @@ const AppInputComponent = ({
             isPassword ? (showPassword ? "text" : "password") : inputProps.type
           }
           disabled={isLoading || inputProps.disabled}
-          className={`w-full h-11 px-4 bg-input border border-border disabled:opacity-40 ${hasError ? "border-red-500" : ""} rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all ${inputProps.className}`}
+          className={`w-full h-11 px-4 bg-input border ${hasError ? "border-red-500" : "border-border"} rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors duration-150 ${isLoading ? "opacity-40" : ""} ${inputProps.className}`}
         />
 
         {isPassword && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:hover:text-muted-foreground disabled:cursor-not-allowed"
+            className={`absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors duration-150 ${isLoading ? "opacity-40 cursor-not-allowed" : ""}`}
             disabled={isLoading || inputProps.disabled}
           >
             {showPassword ? (
-              <AppIcon className="disabled:opacity-40" size={20} icon={IoMdEyeOff} />
+              <AppIcon size={20} icon={IoMdEyeOff} />
             ) : (
-              <AppIcon className="disabled:opacity-40" size={20} icon={IoMdEye} />
+              <AppIcon size={20} icon={IoMdEye} />
             )}
           </button>
         )}
       </div>
 
-      {validator && validator.length > 0 && (
-        <AppValidator propName={validationPropName} validator={validator} />
-      )}
+      {/* Always render — let AppValidator handle show/hide with CSS */}
+      <AppValidator propName={validationPropName} validator={validator} />
     </>
   );
 };
