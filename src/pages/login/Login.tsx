@@ -5,31 +5,10 @@ import AppButton from "../../common/components/AppButton";
 import AppCard from "../../common/components/AppCard";
 import AppIcon from "../../common/components/AppIcon";
 import { BsArrowRight } from "react-icons/bs";
-import { memo, useCallback} from "react";
+import { useCallback } from "react";
 import RequiredStar from "../../common/components/RequiredStar";
-import AppLogo from "../../common/components/AppLogo";
-
-// Static background — never re-renders
-const LoginBackground = memo(() => (
-  <>
-    <div className="absolute inset-0 bg-gradient-glow" />
-    <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-    <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
-  </>
-));
-
-// Static header — never re-renders
-const LoginHeader = memo(() => (
-  <div className="text-center mb-8">
-    <div className="w-20 h-20 rounded-2xl bg-primary mx-auto flex items-center justify-center shadow-glow mb-4 p-1">
-      <AppLogo className="text-primary-foreground" />
-    </div>
-    <h1 className="text-2xl font-bold tracking-tight">EchoWarehouse</h1>
-    <p className="text-sm text-muted-foreground mt-1">
-      Smart Warehouse Management System
-    </p>
-  </div>
-));
+import { LoginHeader } from "./components/LoginHeader";
+import LoginBackground from "./components/LoginBackground";
 
 export const Login = () => {
   const { login, loginInfo, onChangeLoginInfo, validator, loading } =
@@ -51,6 +30,7 @@ export const Login = () => {
     login();
   }, [login]);
 
+  //TODO: LoginHeaderben a nagy meretu svg-t le kell cserelni png-re, mert rerendernel belassitja a UI-t, mire betolt
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       <LoginBackground />
